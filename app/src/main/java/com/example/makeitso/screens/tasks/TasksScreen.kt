@@ -45,6 +45,9 @@ fun TasksScreen(
   modifier: Modifier = Modifier,
   viewModel: TasksViewModel = hiltViewModel()
 ) {
+  val tasks = viewModel
+    .tasks
+    .collectAsStateWithLifecycle(emptyList())
   Scaffold(
     floatingActionButton = {
       FloatingActionButton(
@@ -67,11 +70,13 @@ fun TasksScreen(
 
       Spacer(modifier = Modifier.smallSpacer())
 
+      val options by viewModel.options
+
       LazyColumn {
-        items(emptyList<Task>(), key = { it.id }) { taskItem ->
+        items(tasks.value, key = { it.id }) { taskItem ->
           TaskItem(
             task = taskItem,
-            options = listOf(),
+            options = options,
             onCheckChange = { viewModel.onTaskCheckChange(taskItem) },
             onActionClick = { action -> viewModel.onTaskActionClick(openScreen, taskItem, action) }
           )
